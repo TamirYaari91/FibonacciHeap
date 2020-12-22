@@ -49,7 +49,7 @@ public class FibonacciHeap {
         toInsert.meld(this);
         setMin(toInsert.findMin());
         setLast(toInsert.getLast());
-        size++;
+        setSize(size() + 1);
         return res; // should be replaced by student code
     }
 
@@ -92,7 +92,7 @@ public class FibonacciHeap {
                 }
             }
         }
-        size--;
+        setSize(size() - 1);
         HeapNode[] newFields = consolidate(getLast());
         setMin(newFields[0]);
         setLast(newFields[1]);
@@ -247,7 +247,7 @@ public class FibonacciHeap {
         if (heap2.findMin().getKey() < findMin().getKey()) {
             setMin(heap2.findMin());
         }
-        size += heap2.size();
+        setSize(size() + heap2.size());
     }
 
     /**
@@ -257,6 +257,10 @@ public class FibonacciHeap {
      */
     public int size() {
         return size; // should be replaced by student code
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
 
