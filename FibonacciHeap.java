@@ -95,7 +95,6 @@ public class FibonacciHeap {
         }
         size--;
         HeapNode[] newFields = consolidate(last);
-        System.out.println(newFields[1].child.next.parent.getKey());
         this.min = newFields[0];
         this.last = newFields[1];
         return;
@@ -119,9 +118,6 @@ public class FibonacciHeap {
         a.child = b; // adding b to the list of a's children.
         b.parent = a;
         a.rank += 1; // a's rank is incremented by 1
-        if (a.getKey() == 2 && b.getKey() == 18) {
-            System.out.println("print from link: parent of "+b.getKey()+" is "+b.parent.getKey());
-        }
         return a;
     }
 
@@ -157,10 +153,6 @@ public class FibonacciHeap {
             while (B[y.rank] != null) {
                 emptyNode(y);
                 y = link(y, B[y.rank]);
-//                System.out.println("y is "+y.getKey());
-//                System.out.println("y child is "+y.child.getKey());
-//                System.out.println("y child.next is "+y.child.next.getKey());
-//                System.out.println("y child.next.parent is "+y.child.next.parent.getKey());
                 B[y.rank - 1] = null;
             }
             B[y.rank] = y;
@@ -185,9 +177,6 @@ public class FibonacciHeap {
                     min = B[i];
                     last.next = last;
                     last.prev = last;
-//                    if (last.getKey() == 2) {
-//                        System.out.println("last.child.next.parent = "+last.child.next.parent.getKey());
-//                    }
                 } else {
                     insertAfter(last, B[i]);
 
@@ -202,7 +191,6 @@ public class FibonacciHeap {
     }
 
     public void cut(HeapNode x) {
-        System.out.println("x = "+x.getKey());
         HeapNode y = x.parent;
         x.parent = null;
         x.mark = false;
@@ -214,7 +202,7 @@ public class FibonacciHeap {
             x.prev.next = x.next;
             x.next.prev = x.prev;
         }
-        System.out.println("x = "+x.getKey());
+        emptyNode(x);
         insertAfter(x,last.next);
     }
 
@@ -301,13 +289,10 @@ public class FibonacciHeap {
      */
     public void decreaseKey(HeapNode x, int delta) {
         x.key -= delta;
-        if (x.parent == null) {
-            if (x.getKey() < min.getKey()) {
-                min = x;
-            }
-            return;
+        if (x.getKey() < min.getKey()) {
+            min = x;
         }
-        if (x.getKey() < x.parent.getKey()) {
+        if (x.parent == null || x.getKey() > x.parent.getKey()) {
             return;
         }
         cascadingCut(x);
