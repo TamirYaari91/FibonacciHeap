@@ -8,6 +8,10 @@ import java.util.*;
 
 public class FibonacciHeap {
 
+    private HeapNode min = null;
+    private int size = 0;
+
+
     /**
      * public boolean isEmpty()
      *
