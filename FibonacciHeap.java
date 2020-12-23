@@ -11,7 +11,7 @@ public class FibonacciHeap {
     private HeapNode min = null; // change to private before submitting
     private HeapNode last = null; // change to private before submitting
     private int size = 0; // change to private before submitting
-    private final double phi = (1 + Math.sqrt(5)) / 2;
+    private static final double phi = (1 + Math.sqrt(5)) / 2;
 
 
     /**
@@ -236,6 +236,7 @@ public class FibonacciHeap {
         } else if (this.isEmpty()) {
             setMin(heap2.findMin());
             setLast(heap2.getLast());
+            setSize(heap2.size());
             return;
         }
         insertAfter(getLast(), heap2.getLast().getNext());
