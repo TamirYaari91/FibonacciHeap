@@ -8,10 +8,14 @@ import java.util.*;
 
 public class FibonacciHeap {
 
-    private HeapNode min = null; // change to private before submitting
-    private HeapNode last = null; // change to private before submitting
-    private int size = 0; // change to private before submitting
+    private HeapNode min = null;
+    private HeapNode last = null;
+    private int size = 0;
     private static final double phi = (1 + Math.sqrt(5)) / 2;
+    private static int counterMarked = 0;
+    private static int counterTrees = 0; // change to private before submitting
+    private static int counterLinks = 0;
+    private static int counterCuts = 0;
 
 
     /**
@@ -50,6 +54,7 @@ public class FibonacciHeap {
         setMin(toInsert.findMin());
         setLast(toInsert.getLast());
         setSize(size() + 1);
+        counterTrees++;
         return res; // should be replaced by student code
     }
 
@@ -60,6 +65,7 @@ public class FibonacciHeap {
      */
     public void deleteMin() {
         HeapNode min = findMin();
+        int numOfChildren = countChildren(min);
         if (findMin().getChild() == null) {
             HeapNode minNext = min.getNext();
             HeapNode minPrev = min.getPrev();
@@ -96,6 +102,25 @@ public class FibonacciHeap {
         HeapNode[] newFields = consolidate(getLast());
         setMin(newFields[0]);
         setLast(newFields[1]);
+        counterTrees--; // original tree with min root is removed from tree count
+        counterTrees += numOfChildren; // min's children added to tree count
+    }
+
+    private int countChildren(HeapNode x) {
+        int counter = 0;
+        if (x.getChild() == null) {
+            return 0;
+        }
+        HeapNode firstList = x.getChild();
+        HeapNode child = x.getChild();
+        while (true) {
+            counter++;
+            child = child.getNext();
+            if (child.getKey() == firstList.getKey()) {
+                break;
+            }
+        }
+        return counter;
     }
 
 
@@ -116,6 +141,8 @@ public class FibonacciHeap {
         a.setChild(b); // adding b to the list of a's children.
         b.setParent(a);
         a.setRank(a.getRank() + 1); // a's rank is incremented by 1
+        counterLinks++;
+        counterTrees--;
         return a;
     }
 
@@ -191,7 +218,9 @@ public class FibonacciHeap {
     public void cut(HeapNode x) {
         HeapNode y = x.getParent();
         x.setParent(null);
-        x.setMark(false);
+        if (x.isMarked()) {
+            x.setMark(false);
+        }
         y.setRank(y.getRank() - 1);
         if (x.getNext() == x) {
             y.setChild(null);
@@ -202,6 +231,8 @@ public class FibonacciHeap {
         }
         emptyNode(x);
         insertAfter(x, getLast().getNext());
+        counterCuts++;
+        counterTrees++;
     }
 
     public void cascadingCut(HeapNode x) {
@@ -281,7 +312,12 @@ public class FibonacciHeap {
      * Deletes the node x from the heap.
      */
     public void delete(HeapNode x) {
-        return; // should be replaced by student code
+        if (x.getKey() >= 0) {
+            decreaseKey(x, Integer.MAX_VALUE);
+        } else {
+            decreaseKey(x, (Integer.MAX_VALUE + x.getKey()));
+        }
+        deleteMin();
     }
 
     /**
@@ -309,7 +345,7 @@ public class FibonacciHeap {
      * The potential equals to the number of trees in the heap plus twice the number of marked nodes in the heap.
      */
     public int potential() {
-        return 0; // should be replaced by student code
+        return counterTrees + 2 * counterMarked;
     }
 
     /**
@@ -321,7 +357,7 @@ public class FibonacciHeap {
      * in its root.
      */
     public static int totalLinks() {
-        return 0; // should be replaced by student code
+        return counterLinks;
     }
 
     /**
@@ -331,7 +367,7 @@ public class FibonacciHeap {
      * A cut operation is the operation which disconnects a subtree from its parent (during decreaseKey/delete methods).
      */
     public static int totalCuts() {
-        return 0; // should be replaced by student code
+        return counterCuts;
     }
 
     /**
@@ -434,6 +470,11 @@ public class FibonacciHeap {
         }
 
         public void setMark(boolean mark) {
+            if (mark) {
+                counterMarked++;
+            } else {
+                counterMarked--;
+            }
             this.mark = mark;
         }
 

@@ -20,6 +20,7 @@ public class Tests {
         System.out.println("last.next = "+heap.getLast().getNext().getKey());
         System.out.println("last.prev = "+heap.getLast().getPrev().getKey());
         System.out.println("last.child = "+heap.getLast().getChild().getKey());
+        System.out.println(-10 - (Integer.MAX_VALUE-10));
 
 //        System.out.println("last.child = "+heap.last.child.getKey());
 //        System.out.println("last.child.parent = "+heap.last.child.parent.getKey());
