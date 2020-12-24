@@ -12,8 +12,8 @@ public class FibonacciHeap {
     private HeapNode last = null;
     private int size = 0;
     private static final double phi = (1 + Math.sqrt(5)) / 2;
-    private static int counterMarked = 0;
-    private static int counterTrees = 0; // change to private before submitting
+    public int counterMarked = 0; // change to private before submitting
+    private int counterTrees = 0;
     private static int counterLinks = 0;
     private static int counterCuts = 0;
 
@@ -34,6 +34,7 @@ public class FibonacciHeap {
         HeapNode root = new HeapNode(key);
         setMin(root);
         setLast(root);
+//        setSize(1);
     }
 
     public boolean isEmpty() {
@@ -65,6 +66,12 @@ public class FibonacciHeap {
      */
     public void deleteMin() {
         HeapNode min = findMin();
+        if (size() == 1) {
+            setMin(null);
+            setLast(null);
+            setSize(0);
+            return;
+        }
         int numOfChildren = countChildren(min);
         if (findMin().getChild() == null) {
             HeapNode minNext = min.getNext();
@@ -161,7 +168,6 @@ public class FibonacciHeap {
     private HeapNode[] consolidate(HeapNode x) {
         double bSizeDouble = Math.ceil(Math.log10(size()) / Math.log10(phi));
         int bSize = (int) bSizeDouble;
-//        System.out.println("bSize = "+bSize);
         HeapNode[] B = new HeapNode[bSize];
         toBuckets(x, B);
         return fromBuckets(B);
@@ -220,7 +226,9 @@ public class FibonacciHeap {
         HeapNode y = x.getParent();
         x.setParent(null);
         if (x.isMarked()) {
-            x.setMark(false);
+//            x.setMark(false);
+            x.mark = false;
+            counterMarked--;
         }
         y.setRank(y.getRank() - 1);
         if (x.getNext() == x) {
@@ -232,7 +240,7 @@ public class FibonacciHeap {
         }
         emptyNode(x);
         insertAfter(x, getLast().getNext());
-        setSize(size() + 1);
+//        setSize(size() + 1);
         counterCuts++;
         counterTrees++;
     }
@@ -242,7 +250,10 @@ public class FibonacciHeap {
         cut(x);
         if (y.getParent() != null) {
             if (!y.isMarked()) {
-                y.setMark(true);
+//                y.setMark(true);
+                y.mark = true;
+                counterMarked++;
+
             } else {
                 cascadingCut(y);
             }
@@ -314,7 +325,7 @@ public class FibonacciHeap {
                 break;
             }
         }
-        return arr; //	 to be replaced by student code
+        return arr;
     }
 
     private int getMaxRank() {
@@ -339,11 +350,7 @@ public class FibonacciHeap {
      * Deletes the node x from the heap.
      */
     public void delete(HeapNode x) {
-        if (x.getKey() >= 0) {
-            decreaseKey(x, Integer.MAX_VALUE);
-        } else {
-            decreaseKey(x, (Integer.MAX_VALUE + x.getKey()));
-        }
+        decreaseKey(x, (x.getKey() - findMin().getKey() + 1));
         deleteMin();
     }
 
@@ -530,15 +537,13 @@ public class FibonacciHeap {
             return mark;
         }
 
-        public void setMark(boolean mark) {
-            if (mark) {
+        public void setMark(boolean mark1) {
+            if (mark1) {
                 counterMarked++;
             } else {
                 counterMarked--;
             }
-            this.mark = mark;
+            this.mark = mark1;
         }
-
-
     }
 }

@@ -7,13 +7,32 @@ import java.util.Collections;
 public class printHeap {
     public static void main(String[] args)  {
         FibonacciHeap h1 = new FibonacciHeap();
-        insertN(h1,30);
+        printHeapFib(h1);
+
+//        insertN(h1,5);
+        h1.insert(2);
+        h1.insert(1);
+        h1.insert(4);
+        h1.insert(3);
+        h1.insert(0);
         printHeapFib(h1);
         h1.deleteMin();
         printHeapFib(h1);
-        System.out.println("total cuts = " + FibonacciHeap.totalCuts());
-        System.out.println("total link = " + FibonacciHeap.totalLinks());
-        System.out.println("potential = " + h1.potential());
+        h1.deleteMin();
+        printHeapFib(h1);
+        h1.deleteMin();
+        printHeapFib(h1);
+        System.out.println(h1.getLast().getKey());
+        System.out.println(h1.getLast().getChild().getNext().getKey());
+        System.out.println("size = "+ h1.size());
+        h1.deleteMin();
+        printHeapFib(h1);
+        h1.deleteMin();
+        printHeapFib(h1);
+
+//        System.out.println("total cuts = " + FibonacciHeap.totalCuts());
+//        System.out.println("total link = " + FibonacciHeap.totalLinks());
+//        System.out.println("potential = " + h1.potential());
 
     }
 
@@ -23,6 +42,11 @@ public class printHeap {
 
     public static void printHeapFib(FibonacciHeap heap) {
         System.out.println("-----------------------------------------------");
+        if (heap.size() == 0) {
+            System.out.println("empty heap!");
+            System.out.println("-----------------------------------------------");
+            return;
+        }
         String[] list = new String[heap.size()*10];
         for (int i = 0; i < heap.size(); i++) {
             list[i] = "";
