@@ -98,8 +98,8 @@ public class FibonacciHeap {
                 }
             }
         }
-        setSize(size() - 1);
         HeapNode[] newFields = consolidate(getLast());
+        setSize(size() - 1);
         setMin(newFields[0]);
         setLast(newFields[1]);
         counterTrees--; // original tree with min root is removed from tree count
@@ -161,6 +161,7 @@ public class FibonacciHeap {
     private HeapNode[] consolidate(HeapNode x) {
         double bSizeDouble = Math.ceil(Math.log10(size()) / Math.log10(phi));
         int bSize = (int) bSizeDouble;
+//        System.out.println("bSize = "+bSize);
         HeapNode[] B = new HeapNode[bSize];
         toBuckets(x, B);
         return fromBuckets(B);
@@ -231,6 +232,7 @@ public class FibonacciHeap {
         }
         emptyNode(x);
         insertAfter(x, getLast().getNext());
+        setSize(size() + 1);
         counterCuts++;
         counterTrees++;
     }
@@ -413,22 +415,26 @@ public class FibonacciHeap {
         return arr;
     }
 
-    private FibonacciHeap insertAtLeastKNodes(FibonacciHeap H, int k) {
-        FibonacciHeap res = new FibonacciHeap();
-        double logKDouble = Math.log(k) / Math.log(2);
-        int logK = (int) Math.ceil(logKDouble);
+    private void insertAtLeastKNodes(FibonacciHeap H, int k) {
+//        double logKDouble = Math.log(k) / Math.log(2);
+//        int logK = (int) Math.ceil(logKDouble);
         HeapNode start = H.findMin();
-        for (int i = 0; i < logK; i++) {
-            insertLevel(res, start);
-            start = start.getChild();
+//        for (int i = 0; i < logK; i++) {
+        for (int i = 0; i < k; i++) {
+            insertLevel(start);
+            if (start.getChild() != null) {
+                start = start.getChild();
+            } else {
+                break;
+            }
+
         }
-        return res;
     }
 
-    private void insertLevel(FibonacciHeap H, HeapNode x) {
+    private void insertLevel(HeapNode x) {
         HeapNode firstList = x;
         while (true) {
-            H.insert(x.getKey());
+            insert(x.getKey());
             x = x.getNext();
             if (firstList.getKey() == x.getKey()) {
                 break;
