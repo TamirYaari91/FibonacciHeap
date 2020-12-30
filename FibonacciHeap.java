@@ -446,6 +446,7 @@ public class FibonacciHeap {
         double logKDouble = Math.log(k) / Math.log(2);
         int finalLevel = (int) Math.ceil(logKDouble);
         insertAtLeastKNodesRec(start.getChild(), helper, finalLevel, 1);
+        printHeap.printHeapFib(helper);
     }
 
     private static void insertAtLeastKNodesRec(HeapNode x,FibonacciHeap helper, int finalLevel, int currLevel) {
