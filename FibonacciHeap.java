@@ -412,31 +412,59 @@ public class FibonacciHeap {
      * You are not allowed to change H.
      */
     public static int[] kMin(FibonacciHeap H, int k) {
-        FibonacciHeap help = new FibonacciHeap();
-        help.insertAtLeastKNodes(H, k);
+        FibonacciHeap helper = new FibonacciHeap();
+//        help.insertAtLeastKNodes(H, k);
+        insertAtLeastKNodes(H, helper, k);
         int[] arr = new int[k];
         for (int i = 0; i < k; i++) {
-            arr[i] = help.findMin().getKey();
-            help.deleteMin();
+            arr[i] = helper.findMin().getKey();
+            helper.deleteMin();
         }
         return arr;
     }
 
-    private void insertAtLeastKNodes(FibonacciHeap H, int k) {
-//        double logKDouble = Math.log(k) / Math.log(2);
-//        int logK = (int) Math.ceil(logKDouble);
-        HeapNode start = H.findMin();
-//        for (int i = 0; i < logK; i++) {
-        for (int i = 0; i < k; i++) {
-            insertLevel(start);
-            if (start.getChild() != null) {
-                start = start.getChild();
-            } else {
+
+//    private void insertAtLeastKNodes(FibonacciHeap H, int k) {
+////        double logKDouble = Math.log(k) / Math.log(2);
+////        int logK = (int) Math.ceil(logKDouble);
+//        HeapNode start = H.findMin();
+////        for (int i = 0; i < logK; i++) {
+//        for (int i = 0; i < k; i++) {
+//            insertLevel(start);
+//            if (start.getChild() != null) {
+//                start = start.getChild();
+//            } else {
+//                break;
+//            }
+//
+//        }
+//    }
+
+    private static void insertAtLeastKNodes(FibonacciHeap tree, FibonacciHeap helper, int k) {
+        HeapNode start = tree.findMin();
+        helper.insert(start.getKey());
+        double logKDouble = Math.log(k) / Math.log(2);
+        int finalLevel = (int) Math.ceil(logKDouble);
+        insertAtLeastKNodesRec(start.getChild(), helper, finalLevel, 1);
+    }
+
+    private static void insertAtLeastKNodesRec(HeapNode x,FibonacciHeap helper, int finalLevel, int currLevel) {
+        if (currLevel > finalLevel) {
+            return;
+        }
+        HeapNode firstList = x;
+        while (true) {
+            helper.insert(x.getKey());
+            if (x.getChild() != null) {
+                insertAtLeastKNodesRec(x.getChild(), helper, finalLevel, currLevel + 1);
+            }
+            x = x.getNext();
+            if (firstList.getKey() == x.getKey()) {
                 break;
             }
-
         }
     }
+
 
     private void insertLevel(HeapNode x) {
         HeapNode firstList = x;
