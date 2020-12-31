@@ -448,18 +448,6 @@ public class FibonacciHeap {
     }
 
 
-    private void insertLevel(HeapNode x) {
-        HeapNode firstList = x;
-        while (true) {
-            insert(x.getKey());
-            x = x.getNext();
-            if (firstList.getKey() == x.getKey()) {
-                break;
-            }
-        }
-    }
-
-
     /**
      * public class HeapNode
      * <p>
