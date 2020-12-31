@@ -11,14 +11,22 @@ public class measurements {
             nodes.add(fibHeap.insert(i));
         }
         fibHeap.deleteMin();
+        printHeap.printHeapFib(fibHeap);
+        System.out.println("-------");
         int delta = m + 1;
         for (int i = 0; i < power; i++) {
             double sigma = 0;
             for (int k = 1; k <= i; k++) {
                 sigma += Math.pow(0.5, k);
             }
+            System.out.println((m - ((m * sigma)) - 2));
             int index = (int) (m - ((m * sigma)) - 2);
+            System.out.println("decreasingKey for node = "+ nodes.get(index).getKey());
+            System.out.println("totalCuts before = " + FibonacciHeap.totalCuts());
             fibHeap.decreaseKey(nodes.get(index), delta);
+            System.out.println("totalCuts after = " + FibonacciHeap.totalCuts());
+            System.out.println("-------");
+
         }
         fibHeap.decreaseKey(nodes.get(1), delta);
         double endTime = System.nanoTime();
@@ -47,6 +55,6 @@ public class measurements {
     }
 
     public static void main(String[] args) {
-        Q2(2000);
+        Q2(10    );
     }
 }
