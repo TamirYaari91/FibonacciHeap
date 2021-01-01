@@ -4,6 +4,9 @@
  * An implementation of fibonacci heap over integers.
  */
 
+// Tamir Yaari - 304842990 - tamiryaari
+// Shay Rozental - 313332181 - shayrozental
+
 import java.util.*;
 
 public class FibonacciHeap {
@@ -193,19 +196,19 @@ public class FibonacciHeap {
     private HeapNode[] fromBuckets(HeapNode[] B) { // returns HeapNode array[], 0 = min, 1 = last
         HeapNode last = null;
         HeapNode min = null;
-        for (int i = 0; i < B.length; i++) {
-            if (B[i] != null) {
+        for (HeapNode node : B) {
+            if (node != null) {
                 if (last == null) {
-                    last = B[i];
-                    min = B[i];
+                    last = node;
+                    min = node;
                     last.setNext(last);
                     last.setPrev(last);
                 } else {
-                    insertAfter(last, B[i]);
+                    insertAfter(last, node);
 
-                    last = B[i];
-                    if (B[i].getKey() < min.getKey()) {
-                        min = B[i];
+                    last = node;
+                    if (node.getKey() < min.getKey()) {
+                        min = node;
                     }
                 }
             }
@@ -217,7 +220,6 @@ public class FibonacciHeap {
         HeapNode y = x.getParent();
         x.setParent(null);
         if (x.isMarked()) {
-//            x.setMark(false);
             x.mark = false;
             counterMarked--;
         }
@@ -231,7 +233,6 @@ public class FibonacciHeap {
         }
         emptyNode(x);
         insertAfter(x, getLast().getNext());
-//        setSize(size() + 1);
         counterCuts++;
         counterTrees++;
     }
@@ -241,7 +242,6 @@ public class FibonacciHeap {
         cut(x);
         if (y.getParent() != null) {
             if (!y.isMarked()) {
-//                y.setMark(true);
                 y.mark = true;
                 counterMarked++;
 
@@ -257,7 +257,7 @@ public class FibonacciHeap {
      * Return the node of the heap whose key is minimal.
      */
     public HeapNode findMin() {
-        return min;// should be replaced by student code
+        return min;
     }
 
     /**
@@ -292,7 +292,7 @@ public class FibonacciHeap {
      * Return the number of elements in the heap
      */
     public int size() {
-        return size; // should be replaced by student code
+        return size;
     }
 
     public void setSize(int size) {
@@ -396,40 +396,8 @@ public class FibonacciHeap {
      * The function should run in O(k*deg(H)).
      * You are not allowed to change H.
      */
-    public static int[] kMin(FibonacciHeap H, int k) {
-        FibonacciHeap helper = new FibonacciHeap();
-        insertAtLeastKNodes(H, helper, k);
-        int[] arr = new int[k];
-        for (int i = 0; i < k; i++) {
-            arr[i] = helper.findMin().getKey();
-            helper.deleteMin();
-        }
-        return arr;
-    }
 
-    private static void insertAtLeastKNodes(FibonacciHeap tree, FibonacciHeap helper, int k) {
-        HeapNode start = tree.findMin();
-        double logKDouble = Math.log(k) / Math.log(2);
-        int finalLevel = (int) Math.ceil(logKDouble);
-        helper.insert(start.getKey());
-        insertAtLeastKNodesRec(start.getChild(), helper, finalLevel, 1);
-    }
-
-    private static void insertAtLeastKNodesRec(HeapNode x, FibonacciHeap helper, int finalLevel, int currLevel) {
-        if (currLevel == finalLevel) {
-            return;
-        }
-        HeapNode firstList = x;
-        do {
-            helper.insert(x.getKey());
-            if (x.getChild() != null) {
-                insertAtLeastKNodesRec(x.getChild(), helper, finalLevel, currLevel + 1);
-            }
-            x = x.getNext();
-        } while (firstList.getKey() != x.getKey());
-    }
-
-    public static int[] kMin2(FibonacciHeap H, int k)
+    public static int[] kMin(FibonacciHeap H, int k)
     {
         // if heap is empty or k = 0 - return an empty array
         if (H.isEmpty() || k == 0) {
@@ -439,7 +407,7 @@ public class FibonacciHeap {
         int[] res = new int[k];
         FibonacciHeap helper = new FibonacciHeap();
         HeapNode root = H.findMin();
-        helper.insert(root.getKey()).setRefPointer(root); // what is refPointer? used to connect nodes from the two heaps?
+        helper.insert(root.getKey()).setConnector(root); // what is refPointer? used to connect nodes from the two heaps?
         res[0] = root.getKey();
         // if root doesn't have any children
         if (root.getChild() == null) {
@@ -450,17 +418,17 @@ public class FibonacciHeap {
         helper.deleteMin(); // helper is now empty
         for (int i = 1; i < k; i++) {
             do {
-                helper.insert(child.getKey()).setRefPointer(child);
+                helper.insert(child.getKey()).setConnector(child);
                 System.out.println("inserted node = " + child.getKey() + " | i = " + i);
                 child = child.getNext();
             } while (child.getKey() != firstList.getKey());
             res[i] = helper.findMin().getKey(); // when i = 1: inserts minimum of level 1 to helper
-            HeapNode helperMinRef = helper.findMin().getRefPointer(); // pointer to representation of helper minimum in given tree
+            HeapNode helperMinConnector = helper.findMin().getConnector(); // pointer to representation of helper minimum in given tree
             helper.deleteMin(); // deletes minimum from tempHeap, so
-            if (helperMinRef.getChild() == null){
-                System.out.println("reached if | helperMinRef = "+helperMinRef.getKey());
-                while(helperMinRef.getChild() == null && helper.findMin() != null) {
-                    helperMinRef = helper.findMin().getRefPointer();
+            if (helperMinConnector.getChild() == null){
+                System.out.println("reached if | helperMinRef = "+helperMinConnector.getKey());
+                while(helperMinConnector.getChild() == null && helper.findMin() != null) {
+                    helperMinConnector = helper.findMin().getConnector();
                     if (++i>=k) {
                         return res;
                     }
@@ -469,7 +437,7 @@ public class FibonacciHeap {
                     helper.deleteMin();
                 }
             }
-            firstList = helperMinRef.getChild();
+            firstList = helperMinConnector.getChild();
             child = firstList;
         }
         return res;
@@ -505,7 +473,7 @@ public class FibonacciHeap {
         private HeapNode prev = this;
         private HeapNode parent = null;
         private HeapNode child = null;
-        public HeapNode refPointer = null;
+        public HeapNode connector = null;
 
 
         public HeapNode(int key) {
@@ -564,12 +532,8 @@ public class FibonacciHeap {
             return mark;
         }
 
-        public HeapNode getRefPointer() {
-            return refPointer;
-        }
+        public HeapNode getConnector() { return connector; }
 
-        public void setRefPointer(HeapNode refPointer) {
-            this.refPointer = refPointer;
-        }
+        public void setConnector(HeapNode connector) { this.connector = connector; }
     }
 }
